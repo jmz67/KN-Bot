@@ -21,7 +21,11 @@ async def chat():
         if user.lower() == "quit":
             break
         state["user_input"] = user
-        state = workflow.invoke(state)
+        # state = workflow.invoke(state)
+        # 使用 langGraph 的 stream 方法
+        async for step in workflow.astream(state):
+            state = step 
+            
         print()  
 
 if __name__ == "__main__":

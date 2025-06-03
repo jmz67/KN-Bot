@@ -96,9 +96,12 @@ def make_stage_node(i: int):
         {state["user_input"]}
         """
         # 用大模型生成回复
-        reply = llm.invoke(prompt).content.strip()
+        reply_chunks = []
+        for chunk in llm.stream(prompt):
+            reply_chunks.append(chunk.content)
+        reply = "".join(reply_chunks).strip()
         elapsed = time.perf_counter() - start
-        logging.info(f"[stage_{i}] reply:\n {reply}")
+        # logging.info(f"[stage_{i}] reply:\n {reply}")
         logging.info(f"[stage_{i}] elapsed: {elapsed:.3f}s")
         return {**state, "assistant_reply": reply, "current_stage": i}
     return _node
